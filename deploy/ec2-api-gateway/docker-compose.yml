@@ -1,0 +1,18 @@
+services:
+  api-gateway:
+    image: ghcr.io/leehyeongjun01/english-compass-api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "80:8080"
+    environment:
+      JAVA_OPTS: -Xms256m -Xmx512m -XX:+UseG1GC
+      JWT_SECRET: ${JWT_SECRET}
+      SPRING_PROFILES_ACTIVE: docker
+      # 각 서비스의 EC2 Private IP로 라우팅
+      SERVICE_USER_SERVICE_URI: http://${EC2_3_PRIVATE_IP}:8081
+      SERVICE_PROBLEM_SERVICE_URI: http://${EC2_2_PRIVATE_IP}:8082
+      SERVICE_LEARNING_SERVICE_URI: http://${EC2_4_PRIVATE_IP}:8083
+      SERVICE_MEDIA_SERVICE_URI: http://${EC2_4_PRIVATE_IP}:8084
+      SERVICE_SPEECH_SERVICE_URI: http://${EC2_3_PRIVATE_IP}:8085
+    restart: unless-stopped
+    mem_limit: 512m

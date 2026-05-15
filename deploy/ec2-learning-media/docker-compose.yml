@@ -1,0 +1,47 @@
+services:
+  learning-service-app:
+    image: ghcr.io/leehyeongjun01/english-compass-learning-service:latest
+    container_name: learning-service-app
+    ports:
+      - "8083:8080"
+    environment:
+      JAVA_OPTS: -Xms128m -Xmx256m -XX:+UseG1GC
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://${EC2_5_PRIVATE_IP}:3306/learning_service_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: ${EC2_5_PRIVATE_IP}:9092
+      REDIS_HOST: ${EC2_5_PRIVATE_IP}
+      REDIS_PORT: 6379
+    restart: unless-stopped
+    mem_limit: 384m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  media-service:
+    image: ghcr.io/leehyeongjun01/english-compass-media-service:latest
+    container_name: media-service
+    ports:
+      - "8084:8080"
+    environment:
+      JAVA_OPTS: -Xms128m -Xmx256m -XX:+UseG1GC -XX:MaxMetaspaceSize=128m
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://${EC2_5_PRIVATE_IP}:3306/media_service_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: ${EC2_5_PRIVATE_IP}:9092
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+      KAKAO_API_KEY: ${KAKAO_API_KEY}
+    restart: unless-stopped
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s

@@ -1,0 +1,27 @@
+[submodule "api-gateway"]
+	path = api-gateway
+	url = https://github.com/English-Compass/english-compass-ops.git
+
+[submodule "UserService(En)"]
+	path = UserService(En)
+	url = https://github.com/English-Compass/UserService.git
+
+[submodule "ProblemService"]
+	path = ProblemService
+	url = https://github.com/English-Compass/ProblemService.git
+
+[submodule "LearningService"]
+	path = LearningService
+	url = https://github.com/English-Compass/LearningService.git
+
+[submodule "MediaService"]
+	path = MediaService
+	url = https://github.com/English-Compass/MediaService.git
+
+[submodule "SpeechService"]
+	path = SpeechService
+	url = https://github.com/English-Compass/SpeechService.git
+
+[submodule "EnglishCompassFrontEnd"]
+	path = EnglishCompassFrontEnd
+	url = https://github.com/English-Compass/FE.git
