@@ -18,11 +18,12 @@ jobs:
       packages: write
 
     steps:
-      - name: Checkout (with submodules)
+      - name: Checkout service repo
         uses: actions/checkout@v4
         with:
+          repository: English-Compass/LearningService
           token: ${{ secrets.GH_PAT }}
-          submodules: true
+          path: LearningService
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -52,7 +53,7 @@ jobs:
             ${{ env.IMAGE }}:latest
             ${{ env.IMAGE }}:${{ github.sha }}
 
-      - name: Deploy to EC2 #4 (learning-service)
+      - name: Deploy to EC2 #4
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.EC2_4_HOST }}
@@ -64,4 +65,3 @@ jobs:
             cd ~/app
             docker-compose up -d --no-deps --force-recreate learning-service-app
             docker image prune -f
-

@@ -12,37 +12,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout (with submodules)
+      - name: Checkout FE repo
         uses: actions/checkout@v4
         with:
+          repository: English-Compass/FE
           token: ${{ secrets.GH_PAT }}
-          submodules: true
-
-      - name: Init nested FE submodule
-        run: |
-          cd EnglishCompassFrontEnd
-          git submodule update --init --recursive
-        env:
-          GIT_ASKPASS: echo
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+          path: FE
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: EnglishCompassFrontEnd/FE/package-lock.json
+          cache-dependency-path: FE/package-lock.json
 
       - name: Install dependencies
         run: |
-          cd EnglishCompassFrontEnd/FE
+          cd FE
           npm ci
 
       - name: Build
         env:
           VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
         run: |
-          cd EnglishCompassFrontEnd/FE
+          cd FE
           npm run build
 
       - name: Configure AWS credentials
@@ -54,11 +47,11 @@ jobs:
 
       - name: Sync to S3
         run: |
-          aws s3 sync EnglishCompassFrontEnd/FE/dist/ s3://${{ secrets.S3_BUCKET_NAME }} \
+          aws s3 sync FE/dist/ s3://${{ secrets.S3_BUCKET_NAME }} \
             --delete \
             --cache-control "public, max-age=31536000" \
             --exclude "index.html"
-          aws s3 cp EnglishCompassFrontEnd/FE/dist/index.html s3://${{ secrets.S3_BUCKET_NAME }}/index.html \
+          aws s3 cp FE/dist/index.html s3://${{ secrets.S3_BUCKET_NAME }}/index.html \
             --cache-control "no-cache, no-store, must-revalidate"
 
       - name: Invalidate CloudFront cache
@@ -66,4 +59,3 @@ jobs:
           aws cloudfront create-invalidation \
             --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
             --paths "/*"
-
