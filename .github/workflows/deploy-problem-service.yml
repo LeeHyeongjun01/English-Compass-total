@@ -64,3 +64,4 @@ jobs:
             cd ~/app
             docker-compose up -d --no-deps --force-recreate problem-service-app
             docker image prune -f
+

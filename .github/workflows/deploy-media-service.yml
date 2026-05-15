@@ -64,3 +64,4 @@ jobs:
             cd ~/app
             docker-compose up -d --no-deps --force-recreate media-service
             docker image prune -f
+
